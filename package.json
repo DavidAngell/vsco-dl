@@ -1,0 +1,33 @@
+{
+  "name": "vsco-dl",
+  "version": "1.0.0",
+  "description": "A package for downloading (and optionally zipping) files from a VSCO user",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidAngell/vsco-dl.git"
+  },
+  "keywords": [
+    "vsco",
+    "download",
+    "vsco",
+    "download",
+    "vsco-dl",
+    "vsco",
+    "dl"
+  ],
+  "author": "DavidAngell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavidAngell/vsco-dl/issues"
+  },
+  "homepage": "https://github.com/DavidAngell/vsco-dl#readme",
+  "dependencies": {
+    "adm-zip": "^0.5.9",
+    "cheerio": "*",
+    "request": "^2.88.2"
+  }
+}
