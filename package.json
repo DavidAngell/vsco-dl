@@ -1,6 +1,6 @@
 {
   "name": "vsco-dl",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "A package for downloading (and optionally zipping) files from a VSCO user",
   "main": "index.js",
   "scripts": {
