@@ -84,16 +84,24 @@ function vscoSession() {
 										}
 									});
 									
-									if (limit && limit - MEDIA_LIMIT * (index + 1) > 0) {
+									if (limit) {
+										if (limit - MEDIA_LIMIT * (index + 1) > 0) {
+											if (JSON.parse(response.body).previous_cursor && previousCursors.includes(encodeURIComponent(JSON.parse(response.body).next_cursor))) {
+												res(media);
+											} else {
+												getMediaAtCursor(++index, JSON.parse(response.body).next_cursor, media, [ ...previousCursors, encodeURIComponent(JSON.parse(response.body).next_cursor)])
+											}
+										} else {
+											res(media);
+										}
+									} else {
 										if (JSON.parse(response.body).previous_cursor && previousCursors.includes(encodeURIComponent(JSON.parse(response.body).next_cursor))) {
 											res(media);
 										} else {
 											getMediaAtCursor(++index, JSON.parse(response.body).next_cursor, media, [ ...previousCursors, encodeURIComponent(JSON.parse(response.body).next_cursor)])
 										}
-									} else {
-										res(media);
 									}
-									
+
 								} else {
 									rej(e || response.statusCode);
 								}
