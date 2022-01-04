@@ -50,31 +50,57 @@ function vscoSession() {
 
 	return {
 		zipLocation: dir + `/${randID}.zip`,
-		getMedia: (username, limit = 1000) => {
+		getMedia: (username, limit = undefined) => {
+			const MEDIA_LIMIT = 100;
+
 			return new Promise((res, rej) => {
 				getSiteID(username)
 					.catch(err => rej(err))
 					.then(siteID => {
-						const options = {
-							'method': 'GET',
-							'url': `https://vsco.co/api/3.0/medias/profile?site_id=${siteID}&limit=${limit}`,
-							'headers': {
-								'accept': ' */*',
-								'authorization': " " + bearer,
-								'user-agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
-							}
-						};
-						
-						request(options, (e, response) => {
-							if (response.statusCode == "200") { 
-								if (e || response.statusCode != "200") throw new Error(e || response.statusCode);
-								const media = [];
-								JSON.parse(response.body).media.forEach(e => media.push(e.image.responsive_url));
-								res(media);
-							} else {
-								rej(e || response.statusCode);
-							}
-						});
+						//Recursive function to make a request to the VSCO api
+						function getMediaAtCursor(index, nextCursor = undefined, previousMedia = [], previousCursors = []) {
+							const options = {
+								'method': 'GET',
+								'url': `https://vsco.co/api/3.0/medias/profile?site_id=${siteID}&limit=` + (limit ? limit - MEDIA_LIMIT * index : MEDIA_LIMIT) + (nextCursor ? `&cursor=${encodeURIComponent(nextCursor)}` : ''),
+								'headers': {
+									'accept': ' */*',
+									'authorization': " " + bearer,
+									'user-agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
+								}
+							};
+							
+							request(options, (e, response) => {
+								if (response.statusCode == "200") {
+									if (e || response.statusCode != "200") throw new Error(e || response.statusCode);
+
+									const media = [ ...previousMedia ];
+									JSON.parse(response.body).media.forEach(e => {
+										if (e.type == 'image') {
+											if (e.image.is_video) {
+												media.push(e.image.video_url)
+											} else {
+												media.push(e.image.responsive_url)
+											}
+										}
+									});
+									
+									if (limit && limit - MEDIA_LIMIT * (index + 1) > 0) {
+										if (JSON.parse(response.body).previous_cursor && previousCursors.includes(encodeURIComponent(JSON.parse(response.body).next_cursor))) {
+											res(media);
+										} else {
+											getMediaAtCursor(++index, JSON.parse(response.body).next_cursor, media, [ ...previousCursors, encodeURIComponent(JSON.parse(response.body).next_cursor)])
+										}
+									} else {
+										res(media);
+									}
+									
+								} else {
+									rej(e || response.statusCode);
+								}
+							});
+						}
+
+						getMediaAtCursor(0);
 					})
 			});
 		},
