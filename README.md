@@ -23,7 +23,7 @@ const vscoSession = require('vsco-dl')();
 ### Download Entire Gallery
 ``` javascript
 const username = "david"
-const limit = 1000 //how many photos/videos it will download
+const limit = 1000 //optional (how many photos/videos it will download)
 const filePath = "./yeet/lmao" //optional (default: "./temp/[randomID]")
 vscoSession.getMedia(username, limit)
 	.catch(err => console.log(err))
@@ -34,7 +34,7 @@ vscoSession.getMedia(username, limit)
 ### Download And Zip Entire Gallery
 ``` javascript
 const username = "david"
-const limit = 1000 //how many photos/videos it will download
+const limit = 1000 //optional (how many photos/videos it will download)
 const filePath = "./yeet/lmao" //optional (default: "./temp/[randomID]")
 vscoSession.getMedia(username, limit)
 	.catch(err => console.log(err))
